@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data</title>
+    
+    <style>
+        .container {
+            margin: 20px auto;
+            max-width: 800px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button onclick="search()">Search</button>
+        <div class="flex-container">
+            <button onclick="sortAZ()">Sort A->Z</button>
+            <button onclick="sortZA()">Sort Z->A</button>
+            <button onclick="sortByMarks()">Sort by Marks</button>
+            <button onclick="sortByPassing()">Sort by Passing</button>
+            <button onclick="sortByClass()">Sort by Class</button>
+            <button onclick="sortByGender()">Sort by Gender</button>
+        </div>
+        <table id="dataTable">
+            <!-- Table content will be generated dynamically -->
+        </table>
+    </div>
+    <script>
+        // Assuming studentsData is your array of student objects
+        const studentsData = [
+            {"id":1,"first_name":"Chadwick","last_name":"Ayre","email":"cayre0@cam.ac.uk","gender":"Male","img_src":"https://robohash.org/corporisquiaperiam.png?size=50x50&set=set1","class":11,"marks":18,"passing":false,"city":"Moorreesburg"},
+            {"id":2,"first_name":"Abrahan","last_name":"Seabrocke","email":"aseabrocke1@ocn.ne.jp","gender":"Male","img_src":"https://robohash.org/autiuredistinctio.png?size=50x50&set=set1","class":3,"marks":27,"passing":true,"city":"Kampong Thom"},
+            {"id":3,"first_name":"Nathanael","last_name":"Laye","email":"nlaye2@typepad.com","gender":"Male","img_src":"https://robohash.org/dolorumsedut.png?size=50x50&set=set1","class":10,"marks":89,"passing":false,"city":"Niquinohomo"},
+            {"id":4,"first_name":"Luigi","last_name":"Balcers","email":"lbalcers3@reverbnation.com","gender":"Agender","img_src":"https://robohash.org/eumaliquamest.png?size=50x50&set=set1","class":8,"marks":30,"passing":false,"city":"Nashtā Rūd"},
+            {"id":5,"first_name":"Adam","last_name":"Gurg","email":"agurg4@xrea.com","gender":"Male","img_src":"https://robohash.org/nemolaborumquis.png?size=50x50&set=set1","class":3,"marks":10,"passing":true,"city":"Sandviken"},
+            {"id":6,"first_name":"Kev","last_name":"Haitlie","email":"khaitlie5@booking.com","gender":"Male","img_src":"https://robohash.org/nonestnon.png?size=50x50&set=set1","class":1,"marks":59,"passing":true,"city":"Bridgewater"},
+            {"id":7,"first_name":"Reinhard","last_name":"Royl","email":"rroyl6@sun.com","gender":"Male","img_src":"https://robohash.org/nobisvelquasi.png?size=50x50&set=set1","class":4,"marks":60,"passing":true,"city":"Padangulaktanding"},
+            {"id":8,"first_name":"Nonah","last_name":"Kilmartin","email":"nkilmartin7@washington.edu","gender":"Female","img_src":"https://robohash.org/eosquodoloremque.png?size=50x50&set=set1","class":9,"marks":4,"passing":false,"city":"Petropavlovsk"},
+            {"id":9,"first_name":"Clo","last_name":"Falkinder","email":"cfalkinder8@mysql.com","gender":"Female","img_src":"https://robohash.org/velitinaccusantium.png?size=50x50&set=set1","class":6,"marks":9,"passing":false,"city":"Novyy Oskol"},
+            {"id":10,"first_name":"Clyve","last_name":"Dedney","email":"cdedney9@europa.eu","gender":"Male","img_src":"https://robohash.org/debitisevenietnon.png?size=50x50&set=set1","class":12,"marks":57,"passing":false,"city":"Jagna"},
+        ];
+
+        function renderTable(data) {
+            const table = document.getElementById("dataTable");
+            table.innerHTML = ""; // Clear existing table
+
+            const headerRow = table.insertRow();
+            for (const key in data[0]) {
+                const th = document.createElement("th");
+                th.textContent = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize first letter
+                headerRow.appendChild(th);
+            }
+
+            data.forEach(student => {
+                const row = table.insertRow();
+                for (const key in student) {
+                    const cell = row.insertCell();
+                    if (key === "passing") {
+                        cell.textContent = student[key] ? "Passing" : "Failed";
+                    } else if (key === "firstName") {
+                        cell.innerHTML = `<img src="${student['image']}"/> ${student['firstName']} ${student['lastName']}`;
+                    } else {
+                        cell.textContent = student[key];
+                    }
+                }
+            });
+        }
+
+        function search() {
+            const searchValue = document.getElementById("searchInput").value.toLowerCase();
+            const filteredData = studentsData.filter(student =>
+                student.firstName.toLowerCase().includes(searchValue) ||
+                student.lastName.toLowerCase().includes(searchValue) ||
+                student.email.toLowerCase().includes(searchValue)
+            );
+            renderTable(filteredData);
+        }
+
+        function sortAZ() {
+            studentsData.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+            renderTable(studentsData);
+        }
+
+        function sortZA() {
+            studentsData.sort((a, b) => (b.firstName + b.lastName).localeCompare(a.firstName + a.lastName));
+            renderTable(studentsData);
+        }
+
+        function sortByMarks() {
+            studentsData.sort((a, b) => a.marks - b.marks);
+            renderTable(studentsData);
+        }
+
+        function sortByPassing() {
+            const passingStudents = studentsData.filter(student => student.passing);
+            renderTable(passingStudents);
+        }
+
+        function sortByClass() {
+            studentsData.sort((a, b) => a.class.localeCompare(b.class));
+            renderTable(studentsData);
+        }
+
+        function sortByGender() {
+            const maleStudents = studentsData.filter(student => student.gender === "male");
+            const femaleStudents = studentsData.filter(student => student.gender === "female");
+            renderTable(maleStudents);
+            renderTable(femaleStudents);
+        }
+
+        // Initially render the table with all data
+        renderTable(studentsData);
+
+    </script>
+</body>
+
+</html>
